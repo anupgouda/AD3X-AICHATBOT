@@ -20,10 +20,16 @@ from langchain_community.vectorstores import FAISS
 load_dotenv()
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+st.write("Environment key found:", bool(GOOGLE_API_KEY))
+
+try:
+    st.write("Streamlit secret found:", "GOOGLE_API_KEY" in st.secrets)
+except Exception:
+    st.write("Streamlit secrets unavailable")
 
 if not GOOGLE_API_KEY:
     try:
-        GOOGLE_API_KEY = st.secrets["GOOGLE_API_KEY"]
+        GOOGLE_API_KEY = st.secrets.get("GOOGLE_API_KEY")
     except Exception:
         GOOGLE_API_KEY = None
 
