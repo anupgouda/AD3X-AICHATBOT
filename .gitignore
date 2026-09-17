@@ -3,5 +3,4 @@ __pycache__/
 *.pyc
 .env
 .DS_Store
-faiss_index/
 PS3_Revolvers.pptx
