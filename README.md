@@ -1,40 +1,50 @@
-# AI Chatbot Project
+# AI Chatbot with Retrieval-Augmented Generation (RAG)
 
-## Overview
-The AI Chatbot project aims to develop an advanced conversational agent utilizing state-of-the-art natural language processing techniques. This chatbot interacts with users across multiple platforms including Discord, Telegram, and a web interface. It employs text embeddings, language models, and retrieval-augmented generation (RAG) to provide intelligent and contextually relevant responses.
+An AI-powered PDF-based chatbot that uses Retrieval-Augmented Generation (RAG) to answer user questions based on uploaded documents.
 
-## Technologies Used
-- **Python**: Core programming language
-- **Google_Gemma**:large language model
-- **Faiss**: Efficient similarity search for text embeddings
-- **Streamlit**: Web application framework for UI
-- **Telegram Bot API**: Integration with Telegram.
-- **Streamlit**: Frontend technologies for web interface
+## 🚀 Live Demo
 
-## Workflow and Implementation Stages
+[👉 Try the AI Chatbot](https://ad3x-aichatbot-iy7fwgvvkepcvtrxh3hzt8.streamlit.app/)
 
-### 1. Data Preparation and Preprocessing
-Clean and structure input data to prepare for analysis and model training.
+## 🏗️ Architecture
 
-### 2. Construction of Text Embeddings
-Generate text embeddings using pre-trained models (e.g., BERT) and store efficiently using Faiss.
+The application follows a Retrieval-Augmented Generation architecture where documents are processed, converted into embeddings, stored in a vector database, and retrieved based on the user's query.
 
-### 3. Implementation of Language Models
-Utilize Hugging Face Transformers to fine-tune or use pre-trained models for understanding user input and generating responses.
+![AI Chatbot Architecture](architecture.png)
 
-### 4. Construction of Retrieval-Augmented Generation (RAG) Model
-Enhance responses by integrating retrieved information from a large dataset or knowledge base.
+### Workflow
 
-### 5. Integration with Platforms
-- **Telegram**: Integrate via Telegram Bot API for messaging interaction.
-- **Webpage**: Develop a user-friendly interface using Streamlit for web browser interaction.
+1. **PDF Documents** – User uploads PDF documents.
+2. **Text Extraction** – Text is extracted from the documents.
+3. **Text Chunking** – Documents are divided into smaller chunks.
+4. **Embeddings** – Text chunks are converted into vector embeddings.
+5. **Vector Store** – Embeddings are stored in FAISS.
+6. **Question Embedding** – The user's question is converted into an embedding.
+7. **Semantic Search** – FAISS retrieves the most relevant document chunks.
+8. **LLM** – Retrieved context is provided to the language model.
+9. **Answer** – The LLM generates the final response based on the retrieved context.
 
-### 6. User Interface Design
-Create an intuitive UI with input fields, chat history display, and interactive elements for seamless communication.
+### Architecture Flow
 
-### 7. Documentation and Presentation
-- **Documentation**: Include detailed code comments, README files (like this one), and technical documentation on system architecture and algorithms.
-- **Presentation**: Prepare a presentation showcasing project features, workflow, technical details, and outcomes.
-
-## Conclusion
-The AI Chatbot project demonstrates advanced capabilities in natural language processing and conversational AI. It leverages text embeddings, language models, and RAG to deliver intelligent responses across Discord, Telegram, and web platforms.
+```text
+PDF Documents
+      ↓
+Text Extraction
+      ↓
+Text Chunking
+      ↓
+Embeddings
+      ↓
+FAISS Vector Store
+      ↓
+User Question
+      ↓
+Question Embedding
+      ↓
+Semantic Search
+      ↓
+Relevant Context
+      ↓
+LLM
+      ↓
+Final Answer
