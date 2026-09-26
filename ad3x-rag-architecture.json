@@ -1,0 +1,549 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "AD3X AI Chatbot \u2014 RAG Architecture",
+    "subtitle": "Two-phase RAG architecture: knowledge ingestion and question answering",
+    "output": "ad3x-rag-architecture.html",
+    "quality_profile": "showcase",
+    "visual_preset": "signal-flow",
+    "views": [
+      {
+        "id": "ingestion",
+        "label": "Knowledge ingestion",
+        "focus": [
+          "pdf",
+          "website",
+          "extract",
+          "chunk",
+          "embed",
+          "faiss"
+        ],
+        "note": "Follow PDF and website content into the FAISS knowledge base."
+      },
+      {
+        "id": "question-answering",
+        "label": "Question answering",
+        "focus": [
+          "streamlit",
+          "telegram",
+          "query-embed",
+          "similarity-search",
+          "faiss",
+          "context",
+          "gemini"
+        ],
+        "note": "Follow a user question through query embedding, similarity search, FAISS retrieval, context construction, and Gemini."
+      },
+      {
+        "id": "grounding",
+        "label": "Grounded answering",
+        "focus": [
+          "similarity-search",
+          "faiss",
+          "context",
+          "gemini"
+        ],
+        "note": "Follow the retrieved top-4 chunks into the grounded context and Gemini response."
+      }
+    ],
+    "repository": {
+      "url": "https://github.com/anupgouda/AD3X-AICHATBOT.git",
+      "revision": "d993ad6357a39f541b36c8307fc86ed6e682e9d3"
+    }
+  },
+  "components": [
+    {
+      "id": "pdf",
+      "type": "external",
+      "label": "PDF Documents",
+      "sublabel": "Uploaded knowledge source",
+      "pos": [
+        40,
+        70
+      ],
+      "size": [
+        145,
+        64
+      ],
+      "sources": [
+        {
+          "path": "data.pdf",
+          "label": "data.pdf"
+        }
+      ]
+    },
+    {
+      "id": "website",
+      "type": "external",
+      "label": "Website",
+      "sublabel": "URL knowledge source",
+      "pos": [
+        40,
+        190
+      ],
+      "size": [
+        145,
+        64
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "scrape_website"
+        }
+      ]
+    },
+    {
+      "id": "extract",
+      "type": "backend",
+      "label": "Text Extraction",
+      "sublabel": "PyPDF2 / BeautifulSoup",
+      "pos": [
+        250,
+        130
+      ],
+      "size": [
+        155,
+        64
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "get_pdf_text"
+        },
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "scrape_website"
+        }
+      ]
+    },
+    {
+      "id": "chunk",
+      "type": "backend",
+      "label": "Text Chunking",
+      "sublabel": "RecursiveCharacterTextSplitter",
+      "tag": "10,000 / 1,000 overlap",
+      "pos": [
+        455,
+        130
+      ],
+      "size": [
+        175,
+        64
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "get_text_chunks"
+        }
+      ]
+    },
+    {
+      "id": "embed",
+      "type": "cloud",
+      "label": "Gemini Embeddings",
+      "sublabel": "gemini-embedding-001",
+      "pos": [
+        685,
+        130
+      ],
+      "size": [
+        175,
+        64
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "get_embeddings"
+        }
+      ]
+    },
+    {
+      "id": "faiss",
+      "type": "database",
+      "label": "FAISS Vector Store",
+      "sublabel": "faiss_index",
+      "tag": "Persistent local index",
+      "pos": [
+        700,
+        285
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "get_vector_store"
+        },
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "load_vector_store"
+        }
+      ]
+    },
+    {
+      "id": "streamlit",
+      "type": "frontend",
+      "label": "Streamlit Chat UI",
+      "sublabel": "PDF upload + website + Q&A",
+      "pos": [
+        40,
+        450
+      ],
+      "size": [
+        175,
+        70
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "main"
+        }
+      ]
+    },
+    {
+      "id": "telegram",
+      "type": "external",
+      "label": "Telegram Bot",
+      "sublabel": "python-telegram-bot",
+      "pos": [
+        40,
+        565
+      ],
+      "size": [
+        175,
+        70
+      ],
+      "sources": [
+        {
+          "path": "telegram_bot.py",
+          "line": 1,
+          "end_line": 534,
+          "label": "handle_message"
+        }
+      ]
+    },
+    {
+      "id": "context",
+      "type": "backend",
+      "label": "Context Builder",
+      "sublabel": "Join retrieved page_content",
+      "pos": [
+        690,
+        450
+      ],
+      "size": [
+        175,
+        70
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "context + answer"
+        },
+        {
+          "path": "telegram_bot.py",
+          "line": 1,
+          "end_line": 534,
+          "label": "context_text"
+        }
+      ]
+    },
+    {
+      "id": "gemini",
+      "type": "cloud",
+      "label": "Gemini LLM",
+      "sublabel": "gemini-3.6-flash",
+      "tag": "Grounded prompt",
+      "pos": [
+        900,
+        450
+      ],
+      "size": [
+        175,
+        70
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "generate_answer"
+        },
+        {
+          "path": "telegram_bot.py",
+          "line": 1,
+          "end_line": 534,
+          "label": "prompt + Gemini"
+        }
+      ]
+    },
+    {
+      "id": "answer",
+      "type": "backend",
+      "label": "Answer / Response",
+      "sublabel": "Cleaned Gemini text",
+      "pos": [
+        1110,
+        450
+      ],
+      "size": [
+        165,
+        70
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "answer"
+        },
+        {
+          "path": "telegram_bot.py",
+          "line": 1,
+          "end_line": 534,
+          "label": "cleaned answer"
+        }
+      ]
+    },
+    {
+      "id": "query-embed",
+      "type": "backend",
+      "label": "Query Embedding",
+      "sublabel": "Question \u2192 vector",
+      "tag": "Query embedding",
+      "pos": [
+        260,
+        450
+      ],
+      "size": [
+        185,
+        70
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "similarity_search"
+        },
+        {
+          "path": "telegram_bot.py",
+          "line": 1,
+          "end_line": 534,
+          "label": "similarity_search"
+        }
+      ]
+    },
+    {
+      "id": "similarity-search",
+      "type": "backend",
+      "label": "Similarity Search / Retriever",
+      "sublabel": "LangChain similarity_search",
+      "tag": "k = 4",
+      "pos": [
+        470,
+        450
+      ],
+      "size": [
+        190,
+        70
+      ],
+      "sources": [
+        {
+          "path": "app.py",
+          "line": 1,
+          "end_line": 391,
+          "label": "similarity_search"
+        },
+        {
+          "path": "telegram_bot.py",
+          "line": 1,
+          "end_line": 534,
+          "label": "similarity_search"
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "AD3X RAG Application",
+      "wraps": [
+        "extract",
+        "chunk",
+        "faiss",
+        "streamlit",
+        "query-embed",
+        "similarity-search",
+        "context",
+        "answer"
+      ],
+      "pad": 24
+    },
+    {
+      "kind": "security-group",
+      "label": "External AI Services",
+      "wraps": [
+        "embed",
+        "gemini"
+      ],
+      "pad": 18
+    }
+  ],
+  "connections": [
+    {
+      "id": "pdf-extract",
+      "from": "pdf",
+      "to": "extract",
+      "label": "PDF text",
+      "variant": "emphasis"
+    },
+    {
+      "id": "website-extract",
+      "from": "website",
+      "to": "extract",
+      "label": "HTML text",
+      "variant": "emphasis"
+    },
+    {
+      "id": "extract-chunk",
+      "from": "extract",
+      "to": "chunk",
+      "label": "raw text"
+    },
+    {
+      "id": "chunk-embed",
+      "from": "chunk",
+      "to": "embed",
+      "label": "chunks"
+    },
+    {
+      "id": "embed-faiss",
+      "from": "embed",
+      "to": "faiss",
+      "label": "vectors",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "streamlit-query",
+      "from": "streamlit",
+      "to": "query-embed",
+      "label": "question",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "telegram-query",
+      "from": "telegram",
+      "to": "query-embed",
+      "label": "question",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "query-search",
+      "from": "query-embed",
+      "to": "similarity-search",
+      "label": "query vector",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -32
+    },
+    {
+      "id": "search-faiss",
+      "from": "similarity-search",
+      "to": "faiss",
+      "label": "similarity search",
+      "variant": "emphasis",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "faiss-context",
+      "from": "faiss",
+      "to": "context",
+      "label": "top-4 chunks",
+      "variant": "emphasis",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        847,
+        363
+      ]
+    },
+    {
+      "id": "context-gemini",
+      "from": "context",
+      "to": "gemini",
+      "label": "context + question",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -32
+    },
+    {
+      "id": "gemini-answer",
+      "from": "gemini",
+      "to": "answer",
+      "label": "generated text",
+      "variant": "emphasis",
+      "fromSide": "right",
+      "toSide": "left",
+      "labelDy": -32
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Knowledge ingestion",
+      "items": [
+        "PDF text is extracted with PyPDF2; web pages are fetched with requests and parsed with BeautifulSoup.",
+        "RecursiveCharacterTextSplitter uses chunk_size 10,000 and overlap 1,000.",
+        "Chunks are embedded with gemini-embedding-001 and stored in the FAISS vector index."
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Question answering",
+      "items": [
+        "A question from Streamlit or Telegram is converted to a query embedding using the same gemini-embedding-001 embedding model through the LangChain retrieval path.",
+        "The similarity-search/retriever operation compares the query against FAISS and requests k=4 relevant documents.",
+        "FAISS returns the top-4 document chunks to the Context Builder."
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Grounded generation",
+      "items": [
+        "The Context Builder joins the retrieved document page_content into one context.",
+        "Gemini receives the context together with the original user question.",
+        "The prompt instructs Gemini to answer only from the provided context and not invent information."
+      ]
+    }
+  ]
+}
