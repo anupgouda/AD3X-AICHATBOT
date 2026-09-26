@@ -12,6 +12,8 @@ The application follows a Retrieval-Augmented Generation architecture where docu
 
 ![AI Chatbot Architecture](architecture.png)
 
+[View Interactive RAG Architecture](https://anupgouda.github.io/AD3X-AICHATBOT/ad3x-rag-architecture.html)
+
 ### Workflow
 
 1. **PDF Documents** – User uploads PDF documents.
